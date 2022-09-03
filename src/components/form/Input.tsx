@@ -22,6 +22,7 @@ const validateRuleObject = (source: any, column: string, type: string, defaultVa
 
 const Input = (props: any) => {
     const {
+        children,
         disabled,
         formState,
         hideLabel,
@@ -29,6 +30,7 @@ const Input = (props: any) => {
         leftIcon,
         leftIconAction,
         name,
+        outlineColor,
         placeholder,
         register,
         rightIcon,
@@ -107,9 +109,11 @@ const Input = (props: any) => {
         <input
             type={inputType}
             className={[
-                "border-0 px-3 py-3 placeholder-blueGray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150",
+                "border-0 px-3 py-3 placeholder-blueGray-300 text-gray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all duration-150",
+                outlineColor ? "focus:outline-none focus:ring ring-"+outlineColor+"-400" : "focus:outline-none focus:ring",
                 leftIcon ? 'pl-10' : '',
                 rightIcon ? 'pr-10' : '',
+                children ? "mb-0" : "",
                 disabled ? "opacity-50" : ""
             ].join(" ")}
             placeholder={placeholder}
@@ -125,6 +129,9 @@ const Input = (props: any) => {
                 <FontAwesomeIcon icon={rightIcon} onClick={rightIconAction ? rightIconAction : () => {}}/>
             </span>
         }
+        {
+            children
+        }
         {errors[name]?.type === 'required' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.required?.message ? rules.required.message : "Este campo es requerido"}.</span>}
         {errors[name]?.type === 'min' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.min?.message ? rules.min.message : `El valor minimo permitido es ${rules.min.value}`}.</span>}
         {errors[name]?.type === 'max' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.max?.message ? rules.max.message : `El valor máximo permitido es ${rules.max.value}`}.</span>}
@@ -139,15 +146,88 @@ const InputSearch = (props: any) => {
     return <Input leftIcon={faSearch} leftIconAction={onSearch} type="text" {...props} />
 }
 
+const SecurityLevels = [
+    [
+        "bg-red-400",
+        "w-0",
+        "h-1",
+    ].join(" "),
+    [
+        "bg-red-400",
+        "w-100",
+        "h-1",
+    ].join(" "),
+    [
+        "bg-orange-400",
+        "w-100",
+        "h-1",
+    ].join(" "),
+    [
+        "bg-green-500",
+        "w-100",
+        "h-1",
+    ].join(" ")
+]
+
 const InputPassword = (props: any) => {
+    const {name, helperIndicator, minLenght, watcher} = props
     const [visible, setVisible] = useState(false)
+    const [levelSecurity, setLevelSecurity] = useState(0);
+    const [levelSecurityMessage, setLevelSecurityMessage] = useState("");
+
+    let currentLength = watcher(name);
+    // currentLength = currentLength.length;
+
     const toggle = () => {
         setVisible(prevState => {
             return !prevState
         })
     }
-    //TODO: (optional) Add a bar with an indicator to level of security password entered
-    return <Input leftIcon={faLock} rightIcon={visible ? faEye : faEyeSlash} rightIconAction={toggle} type={visible ? "text" : "password"} {...props} />
+
+    if(watcher && currentLength !== undefined && currentLength.length >= 1){
+        if(minLenght){
+            if(currentLength.length < minLenght){
+
+            }
+        } else {
+            if(levelSecurity !== 1 && currentLength.length <= 3){
+                setLevelSecurity(1)
+                setLevelSecurityMessage("Incorrecto")
+            } else if(levelSecurity !== 2 && currentLength.length > 3 && currentLength.length < 6){
+                setLevelSecurity(2)
+                setLevelSecurityMessage("Puede mejorar")
+            } else if(levelSecurity !== 3 && currentLength.length > 6){
+                setLevelSecurity(3)
+                setLevelSecurityMessage("Excelente")
+            }
+        }
+    } else {
+        if(levelSecurity !== 0 && currentLength.length === 0){
+            setLevelSecurity(0)
+            setLevelSecurityMessage("")
+        }
+    }
+
+    let StatusBar = null;
+    if(helperIndicator === "bar" && watcher){
+        StatusBar = <div className="w-full mt-2 mb-3 flex flex-row justify-start items-center">
+            <div className="bg-gray-300 h-1 w-3/4">
+                <div className={
+                    SecurityLevels[levelSecurity]
+                }></div>
+            </div>
+            <span className="text-gray-500 text-xs ml-2">{levelSecurityMessage}</span>
+        </div>;
+    } else if(helperIndicator !== "bar" && watcher) {
+        StatusBar = <div className="w-full mt-2 mb-3 flex flex-row justify-start items-center">
+            <span className={[
+                "text-gray-500 text-xs ml-2 font-bold",
+                levelSecurity === 0 ? null : (levelSecurity === 1 ? "text-pink-600" : (levelSecurity === 2 ? "text-yellow-600" : (levelSecurity === 3 ? "text-green-600" : null)))
+            ].join(" ")}>{levelSecurityMessage}</span>
+        </div>;
+    }
+
+    return <Input outlineColor={levelSecurity === 0 ? null : (levelSecurity === 1 ? "pink" : (levelSecurity === 2 ? "yellow" : (levelSecurity === 3 ? "green" : null)))} children={StatusBar} leftIcon={faLock} rightIcon={visible ? faEye : faEyeSlash} rightIconAction={toggle} type={visible ? "text" : "password"} {...props} />
 }
 
 const InputText = (props: any) => {

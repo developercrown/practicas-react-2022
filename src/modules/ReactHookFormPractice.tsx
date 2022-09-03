@@ -8,7 +8,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 const ReactHookFormPractice = (props: any) => {
     const [results, setResults] = useState('');
-    const { formState, handleSubmit, register, /*setFocus, setValue*/ } = useForm<any>({
+    const { formState, handleSubmit, register, watch, /*setFocus, setValue*/ } = useForm<any>({
         defaultValues: {
             nombre: 'rene',
             app: 'corona',
@@ -16,54 +16,54 @@ const ReactHookFormPractice = (props: any) => {
         }
     });
 
-    const formObject: Array<InputComponentProps> = [
-        {
-            name: 'nombre',
-            label: 'Nombre',
-            placeholder: 'Ingresa el nombre completo sin apellidos',
-            rules: {
-                required: {
-                    value: true,
-                    message: "El nombre es obligatorio"
-                },
-                maxLength: 10,
-                minLength: 3
-            }
-        },
-        {
-            name: 'app',
-            label: 'Apellido paterno',
-            placeholder: 'Apellido materno',
-        },
-        {
-            name: 'apm',
-            label: 'Apellido materno',
-            placeholder: 'Apellido paterno',
-            rules: {
-                required: true,
-                maxLength: {
-                    value: 10,
-                    message: "La longitud maxima permitida para este campo es de 10 caracteres.",
-                },
-                minLength: {
-                    value: 3,
-                    message: "La longitud minima permitida para este campo es de 3 caracteres.",
-                }
-            }
-        },
-        {
-            name: 'edad',
-            label: 'Edad',
-            placeholder: 'Edad en años',
-            type: InputTypes.number,
-            value: 33,
-            rules: {
-                required: true,
-                maxLength: 10,
-                minLength: 2
-            }
-        }
-    ]
+    // const formObject: Array<InputComponentProps> = [
+    //     {
+    //         name: 'nombre',
+    //         label: 'Nombre',
+    //         placeholder: 'Ingresa el nombre completo sin apellidos',
+    //         rules: {
+    //             required: {
+    //                 value: true,
+    //                 message: "El nombre es obligatorio"
+    //             },
+    //             maxLength: 10,
+    //             minLength: 3
+    //         }
+    //     },
+    //     {
+    //         name: 'app',
+    //         label: 'Apellido paterno',
+    //         placeholder: 'Apellido materno',
+    //     },
+    //     {
+    //         name: 'apm',
+    //         label: 'Apellido materno',
+    //         placeholder: 'Apellido paterno',
+    //         rules: {
+    //             required: true,
+    //             maxLength: {
+    //                 value: 10,
+    //                 message: "La longitud maxima permitida para este campo es de 10 caracteres.",
+    //             },
+    //             minLength: {
+    //                 value: 3,
+    //                 message: "La longitud minima permitida para este campo es de 3 caracteres.",
+    //             }
+    //         }
+    //     },
+    //     {
+    //         name: 'edad',
+    //         label: 'Edad',
+    //         placeholder: 'Edad en años',
+    //         type: InputTypes.number,
+    //         value: 33,
+    //         rules: {
+    //             required: true,
+    //             maxLength: 10,
+    //             minLength: 2
+    //         }
+    //     }
+    // ]
 
     const enviarDatos = (data: any) => {
         const tmp = JSON.stringify(data, undefined, 4);
@@ -128,7 +128,9 @@ const ReactHookFormPractice = (props: any) => {
                 name="password"
                 placeholder="Ingresa tu nueva contraseña"
                 register={register}
-                rules={{ required: true }} />
+                rules={{ required: true }}
+                watcher={watch}
+                />
 
             <InputNumber
                 formState={formState}
