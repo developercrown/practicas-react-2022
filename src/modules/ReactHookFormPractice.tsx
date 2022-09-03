@@ -1,15 +1,10 @@
-import React, { /*useEffect,*/ useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Submit } from '../components/form/Button';
 import InputTypes from '../components/form/enums/InputTypes';
-import Input, { InputDate, InputDatetime, InputNumber, InputPassword, InputText } from '../components/form/Input';
+import { InputDate, InputDatetime, InputNumber, InputPassword, InputSearch, InputText } from '../components/form/Input';
 import InputComponentProps from '../components/form/interfaces/InputComponentProps';
-
-
-
-const Submit = (props: any) => {
-    const { disabled, label }: { disabled: boolean, label: string } = props;
-    return <input className="bg-green-600 my-4 px-4 rounded-full text-slate-200 shadow-sm text-md" type="submit" value={label} disabled={disabled} />
-}
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 const ReactHookFormPractice = (props: any) => {
     const [results, setResults] = useState('');
@@ -85,6 +80,9 @@ const ReactHookFormPractice = (props: any) => {
 
     // console.log(watch("nombre"), errors)
 
+
+
+
     return <div className="flex flex-row justify-start items-center w-full" style={{ backgroundColor: "#e1e8f0" }}>
         <form className="flex flex-col w-2/4 p-4" onSubmit={handleSubmit(enviarDatos)}>
 
@@ -104,14 +102,26 @@ const ReactHookFormPractice = (props: any) => {
                 )
             } */}
 
+
+            <InputSearch
+                hideLabel
+                formState={formState}
+                onSearch={ () => {alert('Search')} }
+                label="Search"
+                name="search"
+                placeholder="Ingresa tu consulta"
+                register={register}
+                rules={{ required: true }} />
+
             <InputText
                 formState={formState}
                 label="Nombre completo"
+                leftIcon={faUser}
                 name="nombre"
                 placeholder="Ingresa tu nombre sin apellidos"
                 register={register}
                 rules={{ required: true }} />
-                
+
             <InputPassword
                 formState={formState}
                 label="Contraseña"
@@ -126,7 +136,7 @@ const ReactHookFormPractice = (props: any) => {
                 name="edad"
                 placeholder="Ingresa tu edad"
                 register={register}
-                rules={{ required: true }} /> 
+                rules={{ required: true }} />
 
             <InputDate
                 formState={formState}
@@ -134,14 +144,14 @@ const ReactHookFormPractice = (props: any) => {
                 name="fnacimiento"
                 placeholder="Ingresa tu fecha de nacimiento"
                 register={register}
-                rules={{ required: true }} />   
+                rules={{ required: true }} />
 
             <InputDatetime
                 formState={formState}
                 label="Fecha de registro"
                 name="fregistro"
                 placeholder="Ingresa tu fecha de registro con hora"
-                register={register} />   
+                register={register} />
 
             <Submit label="Registrar" />
         </form>
