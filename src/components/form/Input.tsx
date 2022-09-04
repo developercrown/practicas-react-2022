@@ -89,7 +89,7 @@ const Input = (props: any) => {
         ...outputCfg,
         value: value ? value : '',
     }
-
+    
     return <div className="relative flex-wrap items-stretch flex flex-col w-full text-left my-3  pt-5">
         {
             !hideLabel
@@ -110,7 +110,7 @@ const Input = (props: any) => {
             type={inputType}
             className={[
                 "border-0 px-3 py-3 placeholder-blueGray-300 text-gray-600 bg-white rounded text-sm shadow w-full ease-linear transition-all duration-150",
-                outlineColor ? "focus:outline-none focus:ring ring-"+outlineColor+"-400" : "focus:outline-none focus:ring",
+                outlineColor ? "focus:outline-none focus:ring ring-"+outlineColor+"-500" : "focus:outline-none focus:ring",
                 leftIcon ? 'pl-10' : '',
                 rightIcon ? 'pr-10' : '',
                 children ? "mb-0" : "",
@@ -132,12 +132,12 @@ const Input = (props: any) => {
         {
             children
         }
-        {errors[name]?.type === 'required' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.required?.message ? rules.required.message : "Este campo es requerido"}.</span>}
-        {errors[name]?.type === 'min' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.min?.message ? rules.min.message : `El valor minimo permitido es ${rules.min.value}`}.</span>}
-        {errors[name]?.type === 'max' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.max?.message ? rules.max.message : `El valor máximo permitido es ${rules.max.value}`}.</span>}
-        {errors[name]?.type === 'minLength' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.minLength?.message ? rules.minLength.message : "No cumple la longitud minima requerida para este campo"}.</span>}
-        {errors[name]?.type === 'maxLength' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.maxLength?.message ? rules.maxLength.message : `El numero máximo de caracteres debe ser de ${rules?.maxLength?.value}`}.</span>}
-        {errors[name]?.type === 'pattern' && <span className="text-red-500 text-sm text-right w-full mt-2">{rules?.pattern?.message ? rules.pattern.message : "El valor ingresado no es valido, verifiquelo por favor"}.</span>}
+        {errors[name]?.type === 'required' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.required?.message ? rules.required.message : "Este campo es requerido"}.</span>}
+        {errors[name]?.type === 'min' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.min?.message ? rules.min.message : `El valor minimo permitido es ${rules.min.value}`}.</span>}
+        {errors[name]?.type === 'max' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.max?.message ? rules.max.message : `El valor máximo permitido es ${rules.max.value}`}.</span>}
+        {errors[name]?.type === 'minLength' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.minLength?.message ? rules.minLength.message : "No cumple la longitud minima requerida para este campo"}.</span>}
+        {errors[name]?.type === 'maxLength' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.maxLength?.message ? rules.maxLength.message : `El numero máximo de caracteres debe ser de ${rules?.maxLength?.value}`}.</span>}
+        {errors[name]?.type === 'pattern' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.pattern?.message ? rules.pattern.message : "El valor ingresado no es valido, verifiquelo por favor"}.</span>}
     </div>
 }
 
@@ -186,19 +186,41 @@ const InputPassword = (props: any) => {
 
     if(watcher && currentLength !== undefined && currentLength.length >= 1){
         if(minLenght){
-            if(currentLength.length < minLenght){
-
+            if (levelSecurity !== 0 && currentLength.length <= 0){
+                setLevelSecurity(0)
+                setLevelSecurityMessage("")
+            } else if(levelSecurity !== 1 && currentLength.length < minLenght){
+                setLevelSecurity(1)
+                setLevelSecurityMessage("Incompleta")
+            } else if(levelSecurity !== 3 && currentLength.length >= minLenght){
+                setLevelSecurity(3)
+                setLevelSecurityMessage("Correcto")
             }
         } else {
             if(levelSecurity !== 1 && currentLength.length <= 3){
                 setLevelSecurity(1)
-                setLevelSecurityMessage("Incorrecto")
+                if(helperIndicator === "bar"){
+                    setLevelSecurityMessage("Incompleta")
+                } else {
+                    setLevelSecurityMessage("No cumple el tamaño minimo")
+                }
+                
             } else if(levelSecurity !== 2 && currentLength.length > 3 && currentLength.length < 6){
                 setLevelSecurity(2)
-                setLevelSecurityMessage("Puede mejorar")
+                if(helperIndicator === "bar"){
+                    setLevelSecurityMessage("Demasiado corta")
+                } else {
+                    setLevelSecurityMessage("Aún falta, sigue asi...")
+                }
+                
             } else if(levelSecurity !== 3 && currentLength.length > 6){
                 setLevelSecurity(3)
-                setLevelSecurityMessage("Excelente")
+                if(helperIndicator === "bar"){
+                    setLevelSecurityMessage("Correcto")
+                } else {
+                    setLevelSecurityMessage("La contraseña es valida")
+                }
+                
             }
         }
     } else {

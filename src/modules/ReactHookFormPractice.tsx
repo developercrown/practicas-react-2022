@@ -123,6 +123,8 @@ const ReactHookFormPractice = (props: any) => {
                 rules={{ required: true }} />
 
             <InputPassword
+                helperIndicator="other"
+                minLenght={10}
                 formState={formState}
                 label="Contraseña"
                 name="password"
