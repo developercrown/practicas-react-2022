@@ -1,0 +1,38 @@
+@keyframes check-in-animation {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
+.tailwind-checkbox{
+    overflow:hidden;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    transition: all ease .2s;
+}
+
+.tailwind-checkbox.disabled{
+    background-color: rgba(106, 106, 106, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.tailwind-checkbox.checked, .tailwind-checkbox.checked:hover{
+    background-color: rgba(7, 109, 191, .9);
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.tailwind-checkbox:hover{
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.tailwind-checkbox svg{
+    animation: check-in-animation cubic-bezier(0.33, 0.28, 0, 1.29) .4s forwards;
+    display: block;
+    transition: all ease .2s;
+    transform: translateY(10px);
+}

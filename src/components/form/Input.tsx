@@ -129,20 +129,23 @@ const Input = (props: any) => {
                 <FontAwesomeIcon icon={rightIcon} onClick={rightIconAction ? rightIconAction : () => {}}/>
             </span>
         }
-        {
-            children
-        }
         {errors[name]?.type === 'required' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.required?.message ? rules.required.message : "Este campo es requerido"}.</span>}
         {errors[name]?.type === 'min' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.min?.message ? rules.min.message : `El valor minimo permitido es ${rules.min.value}`}.</span>}
         {errors[name]?.type === 'max' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.max?.message ? rules.max.message : `El valor máximo permitido es ${rules.max.value}`}.</span>}
         {errors[name]?.type === 'minLength' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.minLength?.message ? rules.minLength.message : "No cumple la longitud minima requerida para este campo"}.</span>}
         {errors[name]?.type === 'maxLength' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.maxLength?.message ? rules.maxLength.message : `El numero máximo de caracteres debe ser de ${rules?.maxLength?.value}`}.</span>}
         {errors[name]?.type === 'pattern' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.pattern?.message ? rules.pattern.message : "El valor ingresado no es valido, verifiquelo por favor"}.</span>}
+        {
+            children
+        }
     </div>
 }
 
 const InputSearch = (props: any) => {
-    const {onSearch} = props
+    const {onSearch, searchButtonPosition} = props
+    if(searchButtonPosition && searchButtonPosition == "right"){
+        return <Input rightIcon={faSearch} rightIconAction={onSearch} type="text" {...props} />
+    }
     return <Input leftIcon={faSearch} leftIconAction={onSearch} type="text" {...props} />
 }
 
@@ -154,12 +157,12 @@ const SecurityLevels = [
     ].join(" "),
     [
         "bg-red-400",
-        "w-100",
+        "w-1/3",
         "h-1",
     ].join(" "),
     [
         "bg-orange-400",
-        "w-100",
+        "w-2/3",
         "h-1",
     ].join(" "),
     [
@@ -233,12 +236,18 @@ const InputPassword = (props: any) => {
     let StatusBar = null;
     if(helperIndicator === "bar" && watcher){
         StatusBar = <div className="w-full mt-2 mb-3 flex flex-row justify-start items-center">
-            <div className="bg-gray-300 h-1 w-3/4">
+            <div className={[
+                levelSecurity === 0 ? "bg-gray-0" : "bg-gray-300",
+                "h-1 w-3/4"
+            ].join(" ")}>
                 <div className={
                     SecurityLevels[levelSecurity]
                 }></div>
             </div>
-            <span className="text-gray-500 text-xs ml-2">{levelSecurityMessage}</span>
+            <span className={[
+                "text-gray-500 text-xs ml-2",
+                levelSecurity === 0 ? "opacity-0" : ""
+            ].join(" ")}>{levelSecurityMessage + "."}</span>
         </div>;
     } else if(helperIndicator !== "bar" && watcher) {
         StatusBar = <div className="w-full mt-2 mb-3 flex flex-row justify-start items-center">

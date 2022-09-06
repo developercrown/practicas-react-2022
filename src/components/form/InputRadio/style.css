@@ -1,0 +1,88 @@
+@keyframes radio-in-animation {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    to{
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.tailwind-radio{
+    transition: all ease .2s;
+}
+
+.tailwind-radio .radio-option{
+    display: block;
+    padding-right: 20px;
+}
+
+.tailwind-radio .radio-option input{
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    margin-top: 10px;
+    height: 24px;
+    width: 24px;
+    z-index: 1;
+}
+
+.tailwind-radio .radio-option .checkmark{
+    background-color: rgba(0, 0, 0, .1);
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 1px;
+    position: absolute;
+    border-radius: 100%;
+    margin-top: 10px;
+    height: 24px;
+    width: 24px;
+    transition: background-color ease .2s;
+    z-index: 0;
+}
+
+.tailwind-radio .radio-option input:hover ~ .checkmark{
+    background-color: rgba(0, 0, 0, .2);
+}
+
+.tailwind-radio .radio-option input:checked ~ .checkmark{
+    background-color: rgba(7, 109, 191, .9);
+}
+
+.tailwind-radio .radio-option .checkmark:after{
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.tailwind-radio .radio-option input:checked ~ .checkmark:after{
+    display: block;
+}
+
+.tailwind-radio .radio-option .checkmark:after{
+    animation: radio-in-animation cubic-bezier(0.33, 0.28, 0, 1.29) .5s forwards;
+    top: 8px;
+    left: 8px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+    border: none;
+	background: white;
+    transform: scale(0);
+}
+
+/* .tailwind-radio.disabled{
+    background-color: rgba(106, 106, 106, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.tailwind-radio.checked{
+    background-color: rgba(7, 109, 191, .9);
+    border: 1px solid rgba(0, 0, 0, 0);
+}
+
+.tailwind-radio svg{
+    animation: check-in-animation cubic-bezier(0.33, 0.28, 0, 1.29) .4s forwards;
+    display: block;
+    transition: all ease .2s;
+    transform: translateY(10px);
+} */

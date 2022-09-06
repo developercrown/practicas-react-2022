@@ -5,6 +5,8 @@ import InputTypes from '../components/form/enums/InputTypes';
 import { InputDate, InputDatetime, InputNumber, InputPassword, InputSearch, InputText } from '../components/form/Input';
 import InputComponentProps from '../components/form/interfaces/InputComponentProps';
 import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { InputCheckbox } from '../components/form/InputCheckbox/Checkbox';
+import { InputRadio } from '../components/form/InputRadio/Radio';
 
 const ReactHookFormPractice = (props: any) => {
     const [results, setResults] = useState('');
@@ -104,14 +106,16 @@ const ReactHookFormPractice = (props: any) => {
 
 
             <InputSearch
-                hideLabel
                 formState={formState}
-                onSearch={ () => {alert('Search')} }
+                hideLabel
                 label="Search"
                 name="search"
+                onSearch={ () => {alert('Search')} }
                 placeholder="Ingresa tu consulta"
                 register={register}
-                rules={{ required: true }} />
+                rules={{ required: true }}
+                searchButtonPosition="right"
+                />
 
             <InputText
                 formState={formState}
@@ -123,7 +127,7 @@ const ReactHookFormPractice = (props: any) => {
                 rules={{ required: true }} />
 
             <InputPassword
-                helperIndicator="other"
+                helperIndicator="bar"
                 minLenght={10}
                 formState={formState}
                 label="Contraseña"
@@ -156,6 +160,34 @@ const ReactHookFormPractice = (props: any) => {
                 name="fregistro"
                 placeholder="Ingresa tu fecha de registro con hora"
                 register={register} />
+
+            <InputCheckbox
+                formState={formState}
+                label="Recordar password"
+                name="remember"
+                register={register}
+                watcher={watch}
+                />
+
+            <InputRadio
+                formState={formState}
+                label="Tipo de contrato"
+                name="contracttype"
+                options={[
+                    {
+                        label: 'convenio', value: "conv"
+                    },
+                    {
+                        label: 'contrato', value: "contract"
+                    },
+                    {
+                        label: 'ninguno', value: "none"
+                    }
+                ]}
+                // position="columns"
+                register={register}
+                watcher={watch}
+                />
 
             <Submit label="Registrar" />
         </form>
