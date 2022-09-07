@@ -7,6 +7,7 @@ import InputComponentProps from '../components/form/interfaces/InputComponentPro
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { InputCheckbox } from '../components/form/InputCheckbox/Checkbox';
 import { InputRadio } from '../components/form/InputRadio/Radio';
+import InputSelect from '../components/form/InputSelect';
 
 const ReactHookFormPractice = (props: any) => {
     const [results, setResults] = useState('');
@@ -82,7 +83,17 @@ const ReactHookFormPractice = (props: any) => {
 
     // console.log(watch("nombre"), errors)
 
-
+    const dataset = [
+        {
+            label: 'convenio', value: "conv"
+        },
+        {
+            label: 'contrato', value: "contract"
+        },
+        {
+            label: 'ninguno', value: "none"
+        }
+    ];
 
 
     return <div className="flex flex-row justify-start items-center w-full" style={{ backgroundColor: "#e1e8f0" }}>
@@ -173,21 +184,21 @@ const ReactHookFormPractice = (props: any) => {
                 formState={formState}
                 label="Tipo de contrato"
                 name="contracttype"
-                options={[
-                    {
-                        label: 'convenio', value: "conv"
-                    },
-                    {
-                        label: 'contrato', value: "contract"
-                    },
-                    {
-                        label: 'ninguno', value: "none"
-                    }
-                ]}
+                options={dataset}
                 // position="columns"
                 register={register}
                 watcher={watch}
                 />
+
+            <InputSelect
+                formState={formState}
+                label="Tipo de subcontrato"
+                name="subcontract"
+                options={dataset}
+                register={register}
+                watcher={watch}
+                />
+            
 
             <Submit label="Registrar" />
         </form>

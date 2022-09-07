@@ -1,8 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
-
-import "./style.css"
+import "./style.css";
 
 const createDefaultObjectValue = (value: any): any => {
     return {
@@ -23,7 +20,6 @@ const validateRuleObject = (source: any, column: string, type: string, defaultVa
 const InputRadio = (props: any) => {
     const {
         disabled,
-        formState,
         hideLabel,
         label,
         name,
@@ -31,13 +27,9 @@ const InputRadio = (props: any) => {
         position,
         register,
         rules,
-        watcher,
         value
     } = props;
-    
-    const currentValue = watcher(name)
 
-    const { errors } = formState;
     const outputCfg: any = {};
     const inputRules: any = {};
 
@@ -53,32 +45,37 @@ const InputRadio = (props: any) => {
         ...outputCfg,
         value: value ? value : '',
     }
-    
+
     return <div className="flex flex-wrap flex-col justify-center items-start my-2">
         {
             !hideLabel && label && <label htmlFor={name} className="text-gray-600 font-bold text-xs uppercase mr-2 select-none cursor-pointer">{label}</label>
         }
         <div className={[
             "flex flex-wrap",
-            position && position === "columns" ?"flex-col" : "flex-row",
+            position && position === "columns" ? "flex-col" : "flex-row",
             "items-start justify-center p-0 m-0 tailwind-radio w-full pl-6",
-            disabled ?  "disabled" : ""
+            disabled ? "disabled" : ""
         ].join(" ")}>
             {
                 options && options.map((item: any, key: number) => {
                     return <div className="radio-option mr-4" key={key}>
-                        <label htmlFor={name+"-"+key} className="text-gray-500 text-sm mr-2 capitalize select-none cursor-pointer">{item.label}</label>
-                        <input className="" key={key} type="radio" value={item.value} name={name} id={name+"-"+key} {
-                            ...register(
-                                name
-                            )
-                        }/>
+                        <label htmlFor={name+"-"+1} className="text-gray-500 text-sm mr-2 capitalize select-none cursor-pointer">
+                            {item.label}
+                        </label>
+                        <input
+                            {...register(name, configRegister)}
+                            type="radio"
+                            name={name}
+                            value={item.value}
+                            id={name+"-"+key}
+                        />
                         <span className="checkmark"></span>
                     </div>
                 })
             }
         </div>
     </div>
+
 }
 
 export {

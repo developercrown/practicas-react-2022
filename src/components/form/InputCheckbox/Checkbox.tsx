@@ -23,7 +23,6 @@ const validateRuleObject = (source: any, column: string, type: string, defaultVa
 const InputCheckbox = (props: any) => {
     const {
         disabled,
-        formState,
         hideLabel,
         label,
         name,
@@ -35,7 +34,6 @@ const InputCheckbox = (props: any) => {
     
     const currentValue = watcher(name)
 
-    const { errors } = formState;
     const outputCfg: any = {};
     const inputRules: any = {};
 
