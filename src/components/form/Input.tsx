@@ -277,18 +277,12 @@ const InputDatetime = (props: any) => {
     return <Input type="datetime-local" {...props} />
 }
 
-const InputFile = (props: any) => {
-    //TODO: create component to upload files with drag and drop option
-    return <Input type="file" {...props} />
-}
-
 //TODO: input year, month, email, color, telephone, url, time
 
 export {
     Input,
     InputDate,
     InputDatetime,
-    InputFile,
     InputNumber,
     InputText,
     InputPassword,

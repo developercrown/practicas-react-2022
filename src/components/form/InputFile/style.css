@@ -1,0 +1,22 @@
+.file-list-selected-item{
+    color: #333;
+    transition: color ease .2s;
+}
+
+.file-list-selected-item:hover{
+    color: rgb(8, 82, 173);
+}
+
+.file-list-selected-delete{
+    opacity: 0;
+    transition: opacity ease .2s;
+}
+
+.file-list-selected-delete:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+.file-list-selected-item:hover .file-list-selected-delete{
+    opacity: 1;
+}

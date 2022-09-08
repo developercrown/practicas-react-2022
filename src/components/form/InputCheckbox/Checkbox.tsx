@@ -85,6 +85,14 @@ const InputCheckbox = (props: any) => {
     </div>
 }
 
+const InputMultiCheckbox = (props: any) => {
+    // TODO: to develop
+    return <div className="multicheckbox">
+        TODO
+    </div>
+}
+
 export {
-    InputCheckbox
+    InputCheckbox,
+    InputMultiCheckbox
 }

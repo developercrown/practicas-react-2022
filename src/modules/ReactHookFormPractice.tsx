@@ -8,10 +8,11 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { InputCheckbox } from '../components/form/InputCheckbox/Checkbox';
 import { InputRadio } from '../components/form/InputRadio/Radio';
 import InputSelect from '../components/form/InputSelect';
+import { InputFile, InputFileDragNDrop } from '../components/form/InputFile';
 
 const ReactHookFormPractice = (props: any) => {
     const [results, setResults] = useState('');
-    const { formState, handleSubmit, register, watch, /*setFocus, setValue*/ } = useForm<any>({
+    const { formState, handleSubmit, register, watch, setValue, resetField } = useForm<any>({
         defaultValues: {
             nombre: 'rene',
             app: 'corona',
@@ -96,8 +97,8 @@ const ReactHookFormPractice = (props: any) => {
     ];
 
 
-    return <div className="flex flex-row justify-start items-center w-full" style={{ backgroundColor: "#e1e8f0" }}>
-        <form className="flex flex-col w-2/4 p-4" onSubmit={handleSubmit(enviarDatos)}>
+    return <form className="flex flex-row justify-start items-center w-full" style={{ backgroundColor: "#e1e8f0" }} onSubmit={handleSubmit(enviarDatos)}>
+        <div className="flex flex-col w-2/4 p-4" >
 
             {/* {
                 formObject.map((item: InputComponentProps, key: number) =>
@@ -121,12 +122,12 @@ const ReactHookFormPractice = (props: any) => {
                 hideLabel
                 label="Search"
                 name="search"
-                onSearch={ () => {alert('Search')} }
+                onSearch={() => { alert('Search') }}
                 placeholder="Ingresa tu consulta"
                 register={register}
                 rules={{ required: true }}
                 searchButtonPosition="right"
-                />
+            />
 
             <InputText
                 formState={formState}
@@ -147,7 +148,7 @@ const ReactHookFormPractice = (props: any) => {
                 register={register}
                 rules={{ required: true }}
                 watcher={watch}
-                />
+            />
 
             <InputNumber
                 formState={formState}
@@ -171,6 +172,9 @@ const ReactHookFormPractice = (props: any) => {
                 name="fregistro"
                 placeholder="Ingresa tu fecha de registro con hora"
                 register={register} />
+            <Submit label="Registrar" />
+        </div>
+        <div className="w-2/4 p-4">
 
             <InputCheckbox
                 formState={formState}
@@ -178,7 +182,7 @@ const ReactHookFormPractice = (props: any) => {
                 name="remember"
                 register={register}
                 watcher={watch}
-                />
+            />
 
             <InputRadio
                 formState={formState}
@@ -188,7 +192,7 @@ const ReactHookFormPractice = (props: any) => {
                 // position="columns"
                 register={register}
                 watcher={watch}
-                />
+            />
 
             <InputSelect
                 formState={formState}
@@ -197,15 +201,30 @@ const ReactHookFormPractice = (props: any) => {
                 options={dataset}
                 register={register}
                 watcher={watch}
-                />
-            
+            />
 
-            <Submit label="Registrar" />
-        </form>
-        <div className="w-2/4 h-40 mt-5 p-4">
+            <InputFile
+                formState={formState}
+                label="Comprobante PDF"
+                name="comprobante"
+                register={register}
+                watcher={watch}
+                reset={resetField}
+                setValue={setValue}
+                multiple
+            />
+
+            <InputFileDragNDrop
+                formState={formState}
+                label="Comprobante Secundario"
+                name="comprobantesecundario"
+                register={register}
+                watcher={watch}
+            />
+            
             <textarea className="text-black p-2 text-sm w-full min-h-full" value={results} readOnly />
         </div>
-    </div>
+    </form>
 }
 
 export default ReactHookFormPractice;
