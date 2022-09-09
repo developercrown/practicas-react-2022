@@ -1,7 +1,46 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faFileArrowUp, faTrash, faXmark  } from '@fortawesome/free-solid-svg-icons'
+import { faFile, faFileArrowUp, faLaptop, faTrash } from '@fortawesome/free-solid-svg-icons'
 import "./style.css";
+
+const inputTypesObject: any = {
+    audio: 'audio/mp3,audio/wav,audio/raw,audio/ogg',
+    video: 'video/mp4,video/avi,video/mpg,video/mpeg',
+    image: 'image/jpg,image/jpeg,image/gif,image/svg,image/svg+xml,image/png',
+    text: 'text/plain',
+    word: 'application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    excel: 'text/csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12',
+    powerpoint: 'application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    rar: 'application/x-rar-compressed',
+    zip: 'application/zip',
+    json: 'application/json',
+    pdf: 'application/pdf',
+    xml: 'application/xml'
+}
+
+const formatBytes = (bytes: any, decimals: number = 2) => {
+    if (bytes === 0) {
+        return '0 Bytes';
+    }
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+const trimFilename = (name: string, limit: number = 15) => {
+    let filenameTmp = name.split('.');
+    const extension = filenameTmp[filenameTmp.length-1];
+    let filename = filenameTmp.slice(0, filenameTmp.length-1).join(" ");
+    if(filename.length >= limit){
+        filename = (filename.split("")).splice(0, limit).join("") + "...";
+    }
+    return {
+        filename,
+        extension
+    }
+}
 
 const createDefaultObjectValue = (value: any): any => {
     return {
@@ -20,14 +59,14 @@ const validateRuleObject = (source: any, column: string, type: string, defaultVa
 }
 
 const InputFile = (props: any) => {
-    //TODO: add accept types
-    //TODO: add size specifications
-    //TODO: add in animation
-
+    //TODO: max file size available
+    
     const {
         disabled,
+        errorTrigger,
         formState,
         hideLabel,
+        itemsRemovables,
         label,
         multiple,
         name,
@@ -36,26 +75,78 @@ const InputFile = (props: any) => {
         setValue,
         reset,
         rules,
+        type,
         watcher,
     }: any = props;
 
     const { errors } = formState;
-
     const currentValue = watcher(name);
-
-    const isEmpty = !currentValue ? true : currentValue?.length === 0
-
-    let enteredFiles: any = [];
-
     const inputRules: any = {};
 
-    if(currentValue){
-        if(currentValue.length >= 1){
-            enteredFiles = Array.from(currentValue);
+    const [isEmpty, setIsEmpty] = useState<boolean>(true);
+    const [acceptedFileTypes, setAcceptedFileTypes] = useState<string>("*")
+    const [enteredFiles, setEnteredFiles] = useState<any[]>([])
+
+
+    useEffect(() => {
+        if (!type) {
+            setAcceptedFileTypes('*');
         } else {
-            enteredFiles = [];
-        } 
-    }
+            switch (type) {
+                case 'audio':
+                case 'video':
+                case 'image':
+                case 'text':
+                case 'word':
+                case 'excel':
+                case 'powerpoint':
+                case 'rar':
+                case 'zip':
+                case 'json':
+                case 'pdf':
+                case 'xml':
+                    setAcceptedFileTypes(inputTypesObject[type]);
+                    break;
+                default:
+                    setAcceptedFileTypes(type);
+                    break;
+            }
+        }
+    }, [type]);
+
+    useEffect(() => {
+        if (currentValue) {
+            if (currentValue.length >= 1) {
+                let newFileListObject = new DataTransfer();
+
+                for (let index = 0; index < currentValue.length; index++) {
+                    const element = currentValue[index];
+                    if (element.type === acceptedFileTypes) {
+                        newFileListObject.items.add(element);
+                    }
+                }
+                const tmp = Array.from(newFileListObject.files);
+
+                if (tmp.length === 0 && errorTrigger) {
+                    errorTrigger()
+                }
+
+                if (tmp.length === currentValue.length) {
+                    setIsEmpty(!tmp ? true : tmp?.length === 0)
+                    setEnteredFiles(tmp)
+                    return
+                }
+                setValue(name, newFileListObject.files);
+            } else {
+                setEnteredFiles([])
+                setIsEmpty(true)
+            }
+        } else {
+            if (!isEmpty) {
+                setIsEmpty(true)
+            }
+        }
+    }, [currentValue]);
 
     if (rules) {
         if (rules.hasOwnProperty('required')) {
@@ -68,12 +159,12 @@ const InputFile = (props: any) => {
         ...inputRules
     }
 
-    const handleClear  = (event: any) => {
+    const handleClear = (event: any) => {
         event.preventDefault();
         reset(name)
     }
 
-    const rejectClick  = (event: any) => {
+    const rejectClick = (event: any) => {
         event.preventDefault();
     }
 
@@ -86,12 +177,10 @@ const InputFile = (props: any) => {
         newFileListArray.forEach((element: any) => {
             newFileListObject.items.add(element);
         });
-
         setValue(name, newFileListObject.files);
-        
     }
-    
-    return <div className="relative flex-wrap items-stretch flex flex-col w-full text-left my-3  pt-5">
+
+    return <div className={["relative flex-wrap items-stretch flex flex-col w-full text-left my-3 pt-5 overflow-hidden input-file-container shadow-sm"].join(" ")} onContextMenu={rejectClick}>
         {
             !hideLabel
             &&
@@ -108,36 +197,62 @@ const InputFile = (props: any) => {
                 isEmpty ? "h-12" : ""
             ].join(" ")
         }>
-            <label htmlFor={name} className={["w-full h-full flex flex-row", isEmpty ? "justify-center" : "justify-start", "items-center cursor-pointer"].join(" ")}>
-                
+            <label htmlFor={name} className={[
+                "w-full h-full flex flex-row",
+                isEmpty ? "justify-center cursor-pointer" : "justify-start",
+                "items-center"].join(" ")}>
+
                 {
                     isEmpty ?
-                    <>
-                        <FontAwesomeIcon icon={faFileArrowUp} className="text-lg mr-2"/> Seleccionar el archivo ...
-                    </>
-                        :
-                    <div className="text-left p-4 w-full flex flex-col">
-                        <div className="flex h-8">
-                            <div className="w-3/4 h-full flex justify-start items-center">
-                                <span>Archivos Seleccionados:</span>
-                            </div>
-                            <div className=" w-1/4 h-full flex justify-end items-center cursor-pointer" onClick={handleClear}>
-                                <FontAwesomeIcon icon={faTrash} className="text-xl"/>
-                            </div>
+                        <div className={"file-input-menu-item"}>
+                            <FontAwesomeIcon icon={faFileArrowUp} className="text-lg mr-2" /> Cargar archivos
                         </div>
-                        <ol className="pl-4 mt-2 w-full file-list-selected">
-                            {
-                                enteredFiles && enteredFiles.length > 0 && enteredFiles.map((item: any, key: number) =>{
-                                    return <li className="mt-1 flex justify-start items-center select-none file-list-selected-item hover:bg-gray-200 px-2 rounded py-1" key={key} onClick={rejectClick}>
-                                        <FontAwesomeIcon className="text-lg mr-2" icon={faFile}/> {item.name} <span className="ml-2 file-list-selected-delete"><FontAwesomeIcon className="text-lg text-red-700 mt-1" icon={faXmark} onClick={() => handleDeleteFileSelected(key)}/></span>
-                                    </li>
-                                })
-                            }
-                        </ol>
-                    </div>
+                        :
+                        <div className="text-left w-full flex flex-col" onClick={rejectClick}>
+
+                            <div className="flex h-14 file-list-header border-b-2">
+
+                                <div className="w-3/4 h-full flex justify-start items-center bg-white">
+                                    <div className="file-input-menu-item flex flex-col justify-center items-center w-32 h-full border-b-2 border-blue-400">
+                                        <FontAwesomeIcon icon={faLaptop} className="text-lg mb-1 text-blue-500" />
+                                        <span className="block uppercase text-xs font-bold mb-0 z-2 text-blue-400" style={{ textShadow: 'rgba(0, 0, 0 , .1) 0px 1px 2px' }}>{enteredFiles && enteredFiles.length > 1 ? "Mis archivos" : "Mi archivo"}:</span>
+                                    </div>
+                                </div>
+
+                                <div className=" w-1/4 h-full flex justify-end items-center cursor-pointer">
+
+                                    <div className="menu-item flex flex-col justify-center items-center w-32 h-full bg-gray-100 text-gray-600  hover:text-red-500" onClick={handleClear}>
+                                        <FontAwesomeIcon icon={faTrash} className="text-xl" />
+                                        <span className="block uppercase text-xs font-bold mb-0 z-2" style={{ textShadow: 'rgba(0, 0, 0 , .1) 0px 1px 2px' }}>Limpiar</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ol className="px-4 py-2 w-full file-list-selected border-gray-300">
+                                {
+                                    enteredFiles && enteredFiles.length > 0 && enteredFiles.map((item: any, key: number) => {
+                                        const file = trimFilename(item.name, 30);
+                                        const filename = `${file.filename + "." + file.extension} - ${formatBytes(item.size)}`;
+
+                                        return <li className="mt-1 flex justify-between items-center select-none file-list-selected-item hover:bg-gray-200 px-3 rounded py-2" key={key} onClick={rejectClick}>
+                                            <div className="file-item flex justify-center items-center">
+                                                <FontAwesomeIcon className="text-lg mr-2" icon={faFile} />
+                                                <span className="text-gray-600 m-0 p-0">{filename}</span>
+                                            </div>
+                                            {
+                                                itemsRemovables && <span className="ml-2 file-list-selected-delete text-red-700 font-bold flex flex-row justify-center items-center float-right" title="Eliminar archivo">
+                                                    <FontAwesomeIcon className="text-lg" icon={faTrash} onClick={() => handleDeleteFileSelected(key)} />
+                                                </span>
+                                            }
+                                        </li>
+                                    })
+                                }
+                            </ol>
+                        </div>
                 }
             </label>
             <input
+                accept={acceptedFileTypes}
                 type="file"
                 id={name}
                 multiple={multiple ? "multiple" : null}
@@ -147,15 +262,15 @@ const InputFile = (props: any) => {
                 ].join(" ")}
                 placeholder={placeholder}
                 {
-                    ...register(
-                        name,
-                        configRegister
-                    )
+                ...register(
+                    name,
+                    configRegister
+                )
                 }
             />
         </div>
 
-        
+
 
         {errors[name]?.type === 'required' && <span className="text-red-500 font-bold text-sm text-right w-full mt-2">{rules?.required?.message ? rules.required.message : "Este campo es requerido"}.</span>}
     </div>

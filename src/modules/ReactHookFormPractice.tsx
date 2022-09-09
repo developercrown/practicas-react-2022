@@ -71,7 +71,7 @@ const ReactHookFormPractice = (props: any) => {
 
     const enviarDatos = (data: any) => {
         const tmp = JSON.stringify(data, undefined, 4);
-        console.log('mis datos', tmp)
+        console.log('mis datos', data, tmp)
         setResults(tmp)
     }
 
@@ -116,8 +116,7 @@ const ReactHookFormPractice = (props: any) => {
                 )
             } */}
 
-
-            <InputSearch
+            {/* <InputSearch
                 formState={formState}
                 hideLabel
                 label="Search"
@@ -172,9 +171,7 @@ const ReactHookFormPractice = (props: any) => {
                 name="fregistro"
                 placeholder="Ingresa tu fecha de registro con hora"
                 register={register} />
-            <Submit label="Registrar" />
-        </div>
-        <div className="w-2/4 p-4">
+            <Submit label="Registrar" /> */}
 
             <InputCheckbox
                 formState={formState}
@@ -203,16 +200,19 @@ const ReactHookFormPractice = (props: any) => {
                 watcher={watch}
             />
 
-            <InputFile
+            {/* <InputFile
                 formState={formState}
+                errorTrigger={() => { alert("Por favor seleccione almenos un archivo valido") }}
                 label="Comprobante PDF"
                 name="comprobante"
                 register={register}
                 watcher={watch}
                 reset={resetField}
                 setValue={setValue}
-                multiple
-            />
+                rules={{ required: true }}
+                type="pdf"
+                // multiple
+            /> */}
 
             <InputFileDragNDrop
                 formState={formState}
@@ -221,7 +221,8 @@ const ReactHookFormPractice = (props: any) => {
                 register={register}
                 watcher={watch}
             />
-            
+        </div>
+        <div className="w-2/4 p-4">
             <textarea className="text-black p-2 text-sm w-full min-h-full" value={results} readOnly />
         </div>
     </form>
