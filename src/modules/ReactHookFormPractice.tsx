@@ -216,10 +216,16 @@ const ReactHookFormPractice = (props: any) => {
 
             <InputFileDragNDrop
                 formState={formState}
+                errorTrigger={() => { alert("Por favor seleccione almenos un archivo valido") }}
                 label="Comprobante Secundario"
                 name="comprobantesecundario"
                 register={register}
                 watcher={watch}
+                reset={resetField}
+                rules={{ required: true }}
+                setValue={setValue}
+                // type="pdf"
+                multiple
             />
         </div>
         <div className="w-2/4 p-4">

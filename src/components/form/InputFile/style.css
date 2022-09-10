@@ -92,3 +92,15 @@
 .file-list-selected li{
     animation-delay: .6s;
 }
+
+.file-container-wrapper.empty:hover{
+    background-color: rgba(0, 0, 0, .05) ;
+}
+
+.file-container-wrapper.empty:active{
+    background-color: rgba(0, 0, 0, .1) ;
+}
+
+.file-container-wrapper:hover .file-container-drop-zone .icon{
+    color: rgba(8, 82, 173, .7) ;
+}
