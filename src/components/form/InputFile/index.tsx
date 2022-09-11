@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCloudArrowUp, faFile, faFileArrowUp, faLaptop, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCloud, faCloudArrowDown, faCloudArrowUp, faDownLong, faFile, faFileArrowUp, faLaptop, faTrash } from '@fortawesome/free-solid-svg-icons'
 import "./style.css";
 
 const inputTypesObject: any = {
@@ -299,6 +299,7 @@ const InputFileDragNDrop = (props: any) => {
     const inputRules: any = {};
 
     const [isEmpty, setIsEmpty] = useState<boolean>(true);
+    const [isOver, setIsOver] = useState<boolean>(false);
     const [acceptedFileTypes, setAcceptedFileTypes] = useState<string>("*")
     const [enteredFiles, setEnteredFiles] = useState<any[]>([]);
 
@@ -348,12 +349,12 @@ const InputFileDragNDrop = (props: any) => {
         if (setValue && reset) {
             if (currentValue) {
                 console.log(currentValue);
-                
+
                 if (currentValue.length >= 1) {
                     let newFileListObject = new DataTransfer();
 
                     for (let index = 0; index < currentValue.length; index++) {
-                        const element = currentValue[index];                        
+                        const element = currentValue[index];
                         if (element.type === acceptedFileTypes || acceptedFileTypes == "*") {
                             newFileListObject.items.add(element);
                         }
@@ -368,7 +369,7 @@ const InputFileDragNDrop = (props: any) => {
                         setIsEmpty(!tmp ? true : tmp?.length === 0)
                         setEnteredFiles(tmp)
                         console.log(tmp);
-                        
+
                         return
                     }
                     setValue(name, newFileListObject.files);
@@ -389,6 +390,35 @@ const InputFileDragNDrop = (props: any) => {
             inputRules["required"] = validateRuleObject(rules, 'required', 'boolean', false);
         }
     }
+
+    const handleDragEnter = (event: any) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const { type } = event
+
+        if (type === 'dragenter' || type === 'dragover') {
+            if (!isOver) {
+                console.log("event over");
+                setIsOver(true)
+            }
+        } else if (type == "dragleave") {
+            if (isOver) {
+                console.log("event leave");
+                setIsOver(false)
+            }
+        }
+
+    }
+
+    const handleDrop = function (event: any) {
+        event.preventDefault();
+        event.stopPropagation();
+        setIsOver(false);
+        if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+            setValue(name, event.dataTransfer.files)
+        }
+    };
 
     return <div className={["relative flex-wrap items-stretch flex flex-col w-full text-left my-3 pt-5 overflow-hidden input-file-container shadow-sm select-none"].join(" ")} onContextMenu={rejectClick}>
         {
@@ -428,14 +458,57 @@ const InputFileDragNDrop = (props: any) => {
                     </div>
                     <div className="file-container w-full h-56 p-4">
                         {
-                            isEmpty ? <div className="file-container-wrapper empty h-52 border-2 border-blue-500 border-dashed flex flex-row flex-wrap justify-center items-center">
-                                <div className="file-container-drop-zone flex flex-col flex-wrap justify-center items-center">
-                                    <FontAwesomeIcon icon={faCloudArrowUp} className="text-gray-300 icon" style={{ fontSize: "5rem" }} />
-                                    <h2 className="text-md text-gray-600 mt-2 text-center">Arrastra y suelta tus archivos aqui <br /> <span className="font-bold">O</span> <br />Haz clic aquí para seleccionar tus archivos</h2>
+                            isEmpty ? <div className={[
+                                "file-container-wrapper empty h-52 border-2 border-blue-500 border-dashed flex flex-row flex-wrap justify-center items-center",
+                                isOver ? "file-container-drop-zone-over" : ""
+                            ].join(" ")}
+                                onDragEnter={handleDragEnter}
+                                onDragOver={handleDragEnter}
+                                onDragLeave={handleDragEnter}
+                                onDrop={handleDrop}
+                            >
+                                <div
+                                    className={
+                                        [
+                                            "file-container-drop-zone flex flex-col flex-wrap justify-center items-center",
+                                        ].join(" ")
+                                    }
+                                >
+                                    {
+                                        !isOver ?
+                                            <>
+                                                <FontAwesomeIcon icon={faCloudArrowUp} className="text-gray-300 icon" style={{ fontSize: "5rem" }} />
+                                                <h2 className="text-md text-gray-600 mt-2 text-center">Arrastra y suelta tus archivos aqui <br /> <span className="font-bold">O</span> <br />Haz clic aquí para seleccionar tus archivos</h2>
+                                            </>
+                                            :
+                                            <div
+                                                className="flex flex-col flex-wrap justify-center items-center"
+
+                                            >
+                                                <div
+                                                    className="flex flex-col flex-wrap justify-center items-center"
+
+                                                >
+                                                    <FontAwesomeIcon icon={faDownLong} className="text-gray-500 icon icon-over absolute m-0 p-0" style={{ fontSize: "3rem" }} />
+                                                    <FontAwesomeIcon icon={faCloud} className="text-gray-300 icon" style={{ fontSize: "5rem" }} />
+                                                </div>
+                                                <h2 className="text-md text-gray-600 mt-2 text-center font-bold text-sm icon-over">Suelta tus archivos aquí</h2>
+                                            </div>
+                                    }
+
                                 </div>
                             </div>
                                 :
-                                <div className="file-container-wrapper h-52 border-2 border-blue-500 border-dashed flex flex-col flex-wrap justify-start items-center overflow-auto">
+                                <div
+                                    className={[
+                                    "file-container-wrapper h-52 border-2 border-blue-500 border-dashed flex flex-col flex-wrap justify-start items-center overflow-auto",
+                                    isOver ? "file-container-drop-zone-over" : ""
+                                    ].join(" ")}
+                                    onDragEnter={handleDragEnter}
+                                    onDragOver={handleDragEnter}
+                                    onDragLeave={handleDragEnter}
+                                    onDrop={handleDrop}
+                                >
                                     <ol className="px-4 py-2 w-full file-list-selected border-gray-300">
                                         {
                                             enteredFiles && enteredFiles.length > 0 && enteredFiles.map((item: any, key: number) => {

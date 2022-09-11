@@ -104,3 +104,29 @@
 .file-container-wrapper:hover .file-container-drop-zone .icon{
     color: rgba(8, 82, 173, .7) ;
 }
+
+@keyframes over-drop-zone {
+    from {
+        transform: translateY(0px);
+    }
+    to {
+        transform: translateY(4px);
+    }
+}
+
+@keyframes over-drop-main-animation {
+    from {
+        border-color: rgba(0, 0, 0, .5);
+    }
+    to {
+        border-color: rgba(150, 150, 150, .5);
+    }
+}
+
+.file-container-drop-zone-over{
+    animation: over-drop-main-animation .5s infinite ease alternate-reverse;
+}
+
+.file-container-drop-zone-over .icon-over{
+    animation: over-drop-zone .4s infinite ease alternate-reverse;
+}

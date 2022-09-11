@@ -171,7 +171,7 @@ const ReactHookFormPractice = (props: any) => {
                 name="fregistro"
                 placeholder="Ingresa tu fecha de registro con hora"
                 register={register} />
-            <Submit label="Registrar" /> */}
+            */}
 
             <InputCheckbox
                 formState={formState}
@@ -230,6 +230,7 @@ const ReactHookFormPractice = (props: any) => {
         </div>
         <div className="w-2/4 p-4">
             <textarea className="text-black p-2 text-sm w-full min-h-full" value={results} readOnly />
+            <Submit label="Registrar" /> 
         </div>
     </form>
 }
